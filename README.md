@@ -1,6 +1,8 @@
 # RIBF
 
-# ROOT Installation
+This code is based on ROOT and ANAROOT. The installation process for both is described here.
+
+# 1. ROOT Installation
 
 ### - Ubuntu
 
@@ -47,7 +49,15 @@ root@d:~# cd /home/d/
 root@d:/home/d# gedit .bashrc 
 ```
 
-# ANAROOT installation
+### - Windows
+- Follow this tutorial to install `Xming` and `Ubuntu terminal`: https://www.youtube.com/watch?v=pmfM4Zq6OQU
+- After the intallation,
+  - Start Xming (this will allow the terminal to display root).
+  - Open ther ubuntu terminal
+  - `export DISPLAY = "localhost:0"` (optional step)
+  - `root -l`
+
+# 2. ANAROOT installation
 
 - Following the instructions on webpage: https://ribf.riken.jp/RIBFDAQ/index.php?Tools%2FAnalysis%2FANAROOT%2FInstallation
 
@@ -71,11 +81,11 @@ d@d:~/ANAROOTriken/anaroot$ sudo su
 root@d:/home/d/ANAROOTriken/anaroot# 
 ```
 
-5. ./autogen.sh --prefix=$PWD
+5. `./autogen.sh --prefix=$PWD`
 
-6. make install
+6. `make install`
 
-7. export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/lib
+7. `export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/lib`
 
 
 - Now following the instructions on the second section of webpage: http://be.nucl.ap.titech.ac.jp/~nishi/root.html
@@ -93,9 +103,9 @@ export TARTSYS=/home/d/ANAROOTriken/anaroot
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$TARTSYS/lib
 ```
 
-8. cd run
+8. `cd run`
 
-9. root -l
+9. `root -l`
 - The command history after this step is following.
 ```
 root@d:~# cd /home/d/ANAROOTriken/anaroot
