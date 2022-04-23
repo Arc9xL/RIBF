@@ -7,8 +7,10 @@
 1. Download root_v6.10.04.source.tar.gz from https://root.cern/install/all_releases/
 2. Unpack the tar file in ROOTcern folder.
 3. Create a build folder
+'''
 d@d:~/ROOTcern$ mkdir root-6.10.04Build
 d@d:~/ROOTcern$ cd root-6.10.04Build
+'''
 
 4) cmake as a super user
 d@d:~/ROOTcern/root-6.10.04Build$ sudo su
