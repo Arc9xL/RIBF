@@ -1,10 +1,8 @@
 # RIBF
 
-This code is based on ROOT and ANAROOT. The installation process for both is described here.
+This code is based on ANAROOT. The installation process is described here.
 
-
-
-# 2. ANAROOT installation
+# ANAROOT installation
 
 - Following the instructions on webpage: https://ribf.riken.jp/RIBFDAQ/index.php?Tools%2FAnalysis%2FANAROOT%2FInstallation
 
