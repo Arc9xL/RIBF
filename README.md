@@ -1,6 +1,9 @@
 # RIBF
 
-This code is based on ANAROOT. The installation process is described here.
+- Raw/MakeTree.C and Calib/calib.cc are the main codes.
+- MakeTree.C reads .ridf file and crate .root file which contains the raw data.
+- calib.cc reads .root raw data file generated using MakeTree.C, and gives calibrated data in the form of .root file.
+- MakeTree.C is based on the ANAROOT.
 
 # ANAROOT installation
 
