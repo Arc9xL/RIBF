@@ -9,19 +9,16 @@
 
 - Following the instructions on webpage: https://ribf.riken.jp/RIBFDAQ/index.php?Tools%2FAnalysis%2FANAROOT%2FInstallation
 
-1. Download anaroot_v4.5.36.tgz
+1. Download `anaroot_v4.5.36.tgz`.
 - Extract the file in ANAROOTriken folder.
 ```
 d@d:~/ANAROOTriken$ tar xzfv anaroot_v4.5.36.tgz
 ```
 
-2. cd anaroot
+2. `cd anaroot`
 
-3. In autogen.sh file, replaced sh by bash.
-- because the TARTSYS is in bashrc file.
-- form #!/bin/sh to #!/bin/bash in the first line of autogen.sh.
-
-- Note: I tried excluding this step and check if it works. But results were similar.
+3. In `autogen.sh` file, replaced `sh` by `bash` because the TARTSYS is in bashrc file.
+- form `#!/bin/sh` to `#!/bin/bash` in the first line of autogen.sh.
 
 4. Super user.
 ```
@@ -38,8 +35,8 @@ root@d:/home/d/ANAROOTriken/anaroot#
 
 - Now following the instructions on the second section of webpage: http://be.nucl.ap.titech.ac.jp/~nishi/root.html
 
-8. Add anaroot path to .bashrc file
-- Open .bashrc file
+8. Add anaroot path to `.bashrc` file
+- Open `.bashrc` file
 ```
 root@d:/home/d/ANAROOTriken/anaroot# cd
 root@d:~# gedit .bashrc 
@@ -51,9 +48,9 @@ export TARTSYS=/home/d/ANAROOTriken/anaroot
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$TARTSYS/lib
 ```
 
-8. `cd run`
+9. `cd run`
 
-9. `root -l`
+10. `root -l`
 - The command history after this step is following.
 ```
 root@d:~# cd /home/d/ANAROOTriken/anaroot
@@ -74,11 +71,11 @@ reading libanaloopencexample.so
 root [0] 
 ```
 
-10. To access anaroot as a normal user, I repeated step-7 for bashrc file in /home/d.
+11. To access anaroot as a normal user, I repeated step-7 for bashrc file in `/home/d`.
 ```
 root@d:~# gedit /home/d/.bashrc
 ```
-- The last lines for both the .bashrc files are
+- The last lines for both the `.bashrc` files are
 ```
 # ROOT CERN
 source /home/d/ROOTcern/root-6.10.04install/bin/thisroot.sh 
