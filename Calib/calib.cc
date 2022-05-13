@@ -20,143 +20,175 @@ TRandom3 *random3;
 
 //------------------------------------------------------------------
 
-double function_doppler(double energy_lab, double theta_lab, double beta_beam){// theta_lab = 0 for forward gamma. theta is in deg.
-  double theta_rad = theta_lab*(3.14159265358979312)/180.0;
-  double gamma_beam = 1./TMath::Sqrt(1. - beta_beam*beta_beam);
+double function_doppler(double energy_lab, double theta_lab, double beta_beam)
+{
+  // theta_lab = 0 for forward gamma. theta is in deg.
+
+  double theta_rad         = theta_lab*(3.14159265358979312)/180.0;
+  double gamma_beam        = 1./TMath::Sqrt(1. - beta_beam*beta_beam);
   double energy_beam_frame = gamma_beam * energy_lab * (1.0 - beta_beam * TMath::Cos(theta_rad));
+
   return energy_beam_frame;
 }
 
 //------------------------------------------------------------------
 
-void EventRaw2Calib(RIBF132Raw* raw, RIBF132CalibOut* cal, RIBF132Parameter *para){
-  cal->test_cal_var = raw->F5X;
+void EventRaw2Calib(RIBF132Raw* raw, RIBF132CalibOut* cal, RIBF132Parameter *para)
+{
+  cal -> test_cal_var = raw -> F5X;
   //  std::cout << "raw->F5X" << raw->F5X << std::endl;
-  for(int i=0; i<7; i++){
-    for(int ii=0; ii<4; ii++){
-      cal->test_cal_numhit[i][ii] = raw->PPACTX2_NumHit[i][ii];
-        //std::cout <<raw->PPACTX2_NumHit[i][ii] <<std::endl;
+  
+  for(int i=0; i<7; i++)
+  {
+    for(int ii=0; ii<4; ii++)
+    {
+      cal -> test_cal_numhit[i][ii] = raw -> PPACTX2_NumHit[i][ii];
+
+      //std::cout <<raw->PPACTX2_NumHit[i][ii] <<std::endl;
     }
   }
   
   
   //-----PPAC--------
-  for(int ippac=0; ippac<7; ippac++){
-    for (int j=0; j<4; j++){
+  for(int ippac=0; ippac<7; ippac++)
+  {
+    for (int j=0; j<4; j++)
+    {
       //
-      cal->PPACTSumX[ippac][j] = -9999.;
-      cal->PPACTDiffX[ippac][j] = -9999.;
-      cal->PPACTSumY[ippac][j] = -9999.;
-      cal->PPACTDiffY[ippac][j] = -9999.;
-      cal->PPACX[ippac][j] = -9999.;
-      cal->PPACY[ippac][j] = -9999.;
-      cal->PPACFiredX[ippac][j] = false;
-      cal->PPACFiredY[ippac][j] = false;
+      cal -> PPACTSumX[ippac][j]      = -9999.;
+      cal -> PPACTDiffX[ippac][j]     = -9999.;
+      cal -> PPACTSumY[ippac][j]      = -9999.;
+      cal -> PPACTDiffY[ippac][j]     = -9999.;
+      cal -> PPACX[ippac][j]          = -9999.;
+      cal -> PPACY[ippac][j]          = -9999.;
+      cal -> PPACFiredX[ippac][j]     = false;
+      cal -> PPACFiredY[ippac][j]     = false;
+
       //
-      cal->PPACX_online[ippac][j] = raw->PPACX[ippac][j]; // copy from online
-      cal->PPACY_online[ippac][j] = raw->PPACY[ippac][j]; // copy from online
-      cal->PPACTX1_NumHit[ippac][j] =  raw->PPACTX1_NumHit[ippac][j];
-      cal->PPACTX2_NumHit[ippac][j] =  raw->PPACTX2_NumHit[ippac][j];
-      cal->PPACTY1_NumHit[ippac][j] =  raw->PPACTY1_NumHit[ippac][j];
-      cal->PPACTY2_NumHit[ippac][j] =  raw->PPACTY2_NumHit[ippac][j];
-      cal->PPACTA_NumHit[ippac][j]  =  raw->PPACTA_NumHit[ippac][j];
-      cal->PPACXZpos[ippac][j]      =  raw->PPACXZpos[ippac][j];
-      cal->PPACYZpos[ippac][j]      =  raw->PPACYZpos[ippac][j];
+      cal -> PPACX_online[ippac][j]   = raw -> PPACX[ippac][j];           // copy from online
+      cal -> PPACY_online[ippac][j]   = raw -> PPACY[ippac][j];           // copy from online
+      cal -> PPACTX1_NumHit[ippac][j] = raw -> PPACTX1_NumHit[ippac][j];
+      cal -> PPACTX2_NumHit[ippac][j] = raw -> PPACTX2_NumHit[ippac][j];
+      cal -> PPACTY1_NumHit[ippac][j] = raw -> PPACTY1_NumHit[ippac][j];
+      cal -> PPACTY2_NumHit[ippac][j] = raw -> PPACTY2_NumHit[ippac][j];
+      cal -> PPACTA_NumHit[ippac][j]  = raw -> PPACTA_NumHit[ippac][j];
+      cal -> PPACXZpos[ippac][j]      = raw -> PPACXZpos[ippac][j];
+      cal -> PPACYZpos[ippac][j]      = raw -> PPACYZpos[ippac][j];
+
       //
-      cal->PPACResX[ippac][j] = -9999.;
-      cal->PPACResY[ippac][j] = -9999.;
+      cal -> PPACResX[ippac][j]       = -9999.;
+      cal -> PPACResY[ippac][j]       = -9999.;
+
       //
-      double tx1 = raw->PPACTX1_s[ippac][j] * (para->ppac[ippac][j]->ch2ns_x1);
-      double tx2 = raw->PPACTX2_s[ippac][j] * (para->ppac[ippac][j]->ch2ns_x2);
-      double ty1 = raw->PPACTY1_s[ippac][j] * (para->ppac[ippac][j]->ch2ns_y1);
-      double ty2 = raw->PPACTY2_s[ippac][j] * (para->ppac[ippac][j]->ch2ns_y2);
-      double ta  = raw->PPACTA_s[ippac][j]  * (para->ppac[ippac][j]->ch2ns_a);
-      double tsumx_min   = (para->ppac[ippac][j]->txsum_min);
-      double tsumx_max   = (para->ppac[ippac][j]->txsum_max);
-      double xdtimeoffset= (para->ppac[ippac][j]->xns_off);
-      double xfactor     = (para->ppac[ippac][j]->xfactor);
-      double xoffset     = (para->ppac[ippac][j]->xoffset);
-      double xposoffset  = (para->ppac[ippac][j]->xpos_off);
-      double tsumy_min   = (para->ppac[ippac][j]->tysum_min);
-      double tsumy_max   = (para->ppac[ippac][j]->tysum_max);
-      double ydtimeoffset= (para->ppac[ippac][j]->yns_off);
-      double yfactor     = (para->ppac[ippac][j]->yfactor);
-      double yoffset     = (para->ppac[ippac][j]->yoffset);
-      double yposoffset  = (para->ppac[ippac][j]->ypos_off);
+      double tx1          = raw -> PPACTX1_s[ippac][j] * (para -> ppac[ippac][j] -> ch2ns_x1);    // TDC calibration factor for x1
+      double tx2          = raw -> PPACTX2_s[ippac][j] * (para -> ppac[ippac][j] -> ch2ns_x2);    // TDC calibration factor for x2
+      double ty1          = raw -> PPACTY1_s[ippac][j] * (para -> ppac[ippac][j] -> ch2ns_y1);    // TDC calibration factor for y1
+      double ty2          = raw -> PPACTY2_s[ippac][j] * (para -> ppac[ippac][j] -> ch2ns_y2);    // TDC calibration factor for y2
+      double ta           = raw -> PPACTA_s[ippac][j]  * (para -> ppac[ippac][j] -> ch2ns_a);     // TDC calibration factor for a
+
+      double tsumx_min    = (para -> ppac[ippac][j] -> txsum_min);    // cut for timing sum. disabled if min>=max 
+      double tsumx_max    = (para -> ppac[ippac][j] -> txsum_max);    // cut for timing sum. disabled if min>=max 
+      double xdtimeoffset = (para -> ppac[ippac][j] -> xns_off);      // timing offset of x-plane coming from differenct of left hand and right hand side cable length
+      double xfactor      = (para -> ppac[ippac][j] -> xfactor);      // ns->mm calibration factor depending on delay line
+      double xoffset      = (para -> ppac[ippac][j] -> xoffset);      // geometrical offset of x-plane in x-dir. inside of PPAC
+      double xposoffset   = (para -> ppac[ippac][j] -> xpos_off);     // geometrical offset of x-plane in x-dir.
+      double tsumy_min    = (para -> ppac[ippac][j] -> tysum_min);    // cut for timing sum. disabled if min>=max 
+      double tsumy_max    = (para -> ppac[ippac][j] -> tysum_max);    // cut for timing sum. disabled if min>=max 
+      double ydtimeoffset = (para -> ppac[ippac][j] -> yns_off);      // timing offset of y-plane coming from differenct of left hand and right hand side cable length
+      double yfactor      = (para -> ppac[ippac][j] -> yfactor);      // ns->mm calibration factor depending on delay line
+      double yoffset      = (para -> ppac[ippac][j] -> yoffset);      // geometrical offset of y-plane in y-dir. inside of PPAC
+      double yposoffset   = (para -> ppac[ippac][j] -> ypos_off);     // geometrical offset of x-plane in x-dir.
+      
       //
-      if(0.<tx1 && 0.<tx2 && 0.<ta){
-        cal->PPACTSumX[ippac][j]  = tx1 + tx2 - 2.0*ta;
-        cal->PPACTDiffX[ippac][j] = tx1 - tx2;
+      if(0.<tx1 && 0.<tx2 && 0.<ta)
+      {
+        cal -> PPACTSumX[ippac][j]  = tx1 + tx2 - 2.0*ta; // (tx1 - ta) + (tx2 - ta)
+        cal -> PPACTDiffX[ippac][j] = tx1 - tx2;          // (tx1 - ta) - (tx2 - ta)
       }
-      if(0.<ty1 && 0.<ty2 && 0.< ta){
-        cal->PPACTSumY[ippac][j]  = ty1 + ty2 - 2.0*ta;
-        cal->PPACTDiffY[ippac][j] = ty1 - ty2;
+
+      if(0.<ty1 && 0.<ty2 && 0.< ta)
+      {
+        // Real time is t = t_cathod - t_anode
+        cal -> PPACTSumY[ippac][j]  = ty1 + ty2 - 2.0*ta; // (ty1 - ta) + (ty2 - ta)
+        cal -> PPACTDiffY[ippac][j] = ty1 - ty2;          // (ty1 - ta) - (ty2 - ta)
       }
-      if(tsumx_min <= cal->PPACTSumX[ippac][j]  && cal->PPACTSumX[ippac][j] <= tsumx_max){
-        double temp_tdiffx  =  cal->PPACTDiffX[ippac][j] - xdtimeoffset;
-        cal->PPACX[ippac][j] = -1.0*(temp_tdiffx * xfactor /2.0 - xoffset - xposoffset ); // sign -1 for optics-definition of x.
-        cal->PPACFiredX[ippac][j] = true;
+
+      if(tsumx_min <= cal->PPACTSumX[ippac][j]  && cal->PPACTSumX[ippac][j] <= tsumx_max)
+      {
+        // timing offset of x-plane coming from differenct of left hand and right hand side cable length
+        double temp_tdiffx =  cal->PPACTDiffX[ippac][j] - xdtimeoffset;
+
+        // X = Kx* (Tx1 - Tx2) + Xoff
+        cal -> PPACX[ippac][j]      = -1.0*(temp_tdiffx * xfactor /2.0 - xoffset - xposoffset ); // sign -1 for optics-definition of x.
+        cal -> PPACFiredX[ippac][j] = true;
       }
-      if(tsumy_min <= cal->PPACTSumY[ippac][j]  && cal->PPACTSumY[ippac][j] <= tsumy_max){
-        double temp_tdiffy  =  cal->PPACTDiffY[ippac][j] - ydtimeoffset;
-        cal->PPACY[ippac][j] = 1.0*(temp_tdiffy * yfactor /2.0 - yoffset - yposoffset ); // sign +1 for y
-        cal->PPACFiredY[ippac][j] = true;
+
+      if(tsumy_min <= cal->PPACTSumY[ippac][j]  && cal->PPACTSumY[ippac][j] <= tsumy_max)
+      {
+        // timing offset of y-plane coming from differenct of left hand and right hand side cable length
+        double temp_tdiffy =  cal->PPACTDiffY[ippac][j] - ydtimeoffset;
+
+        // Y = Ky* (Ty1 - Ty2) + Yoff
+        cal -> PPACY[ippac][j]      = 1.0*(temp_tdiffy * yfactor /2.0 - yoffset - yposoffset ); // sign +1 for y
+        cal -> PPACFiredY[ippac][j] = true;
       }
       //--------------
     }
   }
   
   ///----------Track-------------
-  cal->X3_online = raw->F3X;
-  cal->Y3_online = raw->F3Y;
-  cal->A3_online = raw->F3A;
-  cal->B3_online = raw->F3B;
-  cal->X5_online = raw->F5X;
-  cal->Y5_online = raw->F5Y;
-  cal->A5_online = raw->F5A;
-  cal->B5_online = raw->F5B;
-  cal->X7_online = raw->F7X;
-  cal->Y7_online = raw->F7Y;
-  cal->A7_online = raw->F7A;
-  cal->B7_online = raw->F7B;
-  cal->X8_online = raw->F8X;
-  cal->Y8_online = raw->F8Y;
-  cal->A8_online = raw->F8A;
-  cal->B8_online = raw->F8B;
-  cal->X9_online = raw->F9X;
-  cal->Y9_online = raw->F9Y;
-  cal->A9_online = raw->F9A;
-  cal->B9_online = raw->F9B;
-  cal->X11_online = raw->F11X;
-  cal->Y11_online = raw->F11Y;
-  cal->A11_online = raw->F11A;
-  cal->B11_online = raw->F11B;
+  cal -> X3_online  = raw -> F3X;
+  cal -> Y3_online  = raw -> F3Y;
+  cal -> A3_online  = raw -> F3A;
+  cal -> B3_online  = raw -> F3B;
+  cal -> X5_online  = raw -> F5X;
+  cal -> Y5_online  = raw -> F5Y;
+  cal -> A5_online  = raw -> F5A;
+  cal -> B5_online  = raw -> F5B;
+  cal -> X7_online  = raw -> F7X;
+  cal -> Y7_online  = raw -> F7Y;
+  cal -> A7_online  = raw -> F7A;
+  cal -> B7_online  = raw -> F7B;
+  cal -> X8_online  = raw -> F8X;
+  cal -> Y8_online  = raw -> F8Y;
+  cal -> A8_online  = raw -> F8A;
+  cal -> B8_online  = raw -> F8B;
+  cal -> X9_online  = raw -> F9X;
+  cal -> Y9_online  = raw -> F9Y;
+  cal -> A9_online  = raw -> F9A;
+  cal -> B9_online  = raw -> F9B;
+  cal -> X11_online = raw -> F11X;
+  cal -> Y11_online = raw -> F11Y;
+  cal -> A11_online = raw -> F11A;
+  cal -> B11_online = raw -> F11B;
   
-  cal->X3 = -9999.;  cal->X5 = -9999.;  cal->X7 = -9999.;  cal->X8 = -9999.;  cal->X9 = -9999.;  cal->X11= -9999.;
-  cal->Y3 = -9999.;  cal->Y5 = -9999.;  cal->Y7 = -9999.;  cal->Y8 = -9999.;  cal->Y9 = -9999.;  cal->Y11= -9999.;
-  cal->A3 = -9999.;  cal->A5 = -9999.;  cal->A7 = -9999.;  cal->A8 = -9999.;  cal->A9 = -9999.;  cal->A11= -9999.;
-  cal->B3 = -9999.;  cal->B5 = -9999.;  cal->B7 = -9999.;  cal->B8 = -9999.;  cal->B9 = -9999.;  cal->B11= -9999.;
-  cal->F3SSRX = -9999.; cal->F5SSRX = -9999.; cal->F7SSRX = -9999.; cal->F8SSRX = -9999.; cal->F9SSRX = -9999.; cal->F11SSRX = -9999.;
-  cal->F3SSRY = -9999.; cal->F5SSRY = -9999.; cal->F7SSRY = -9999.; cal->F8SSRY = -9999.; cal->F9SSRY = -9999.; cal->F11SSRY = -9999.;
-  cal->F3TrackedX = false;   cal->F3TrackedY = false;
-  cal->F5TrackedX = false;   cal->F5TrackedY = false;
-  cal->F7TrackedX = false;   cal->F7TrackedY = false;
-  cal->F8TrackedX = false;   cal->F8TrackedY = false;
-  cal->F9TrackedX = false;   cal->F9TrackedY = false;
-  cal->F11TrackedX = false;  cal->F11TrackedY= false;
+  cal -> X3 = -9999.;  cal -> X5 = -9999.;  cal -> X7 = -9999.;  cal -> X8 = -9999.;  cal -> X9 = -9999.;  cal -> X11 = -9999.;
+  cal -> Y3 = -9999.;  cal -> Y5 = -9999.;  cal -> Y7 = -9999.;  cal -> Y8 = -9999.;  cal -> Y9 = -9999.;  cal -> Y11 = -9999.;
+  cal -> A3 = -9999.;  cal -> A5 = -9999.;  cal -> A7 = -9999.;  cal -> A8 = -9999.;  cal -> A9 = -9999.;  cal -> A11 = -9999.;
+  cal -> B3 = -9999.;  cal -> B5 = -9999.;  cal -> B7 = -9999.;  cal -> B8 = -9999.;  cal -> B9 = -9999.;  cal -> B11 = -9999.;
+
+  cal -> F3SSRX = -9999.; cal -> F5SSRX = -9999.; cal -> F7SSRX = -9999.; cal -> F8SSRX = -9999.; cal -> F9SSRX = -9999.; cal -> F11SSRX = -9999.;
+  cal -> F3SSRY = -9999.; cal -> F5SSRY = -9999.; cal -> F7SSRY = -9999.; cal -> F8SSRY = -9999.; cal -> F9SSRY = -9999.; cal -> F11SSRY = -9999.;
   
-  cal->F3NumFiredPPACX = 0; for(int j=0; j<4; j++){ (cal->F3NumFiredPPACX) += (int)(cal->PPACFiredX[0][j]) ; }
-  cal->F5NumFiredPPACX = 0; for(int j=0; j<4; j++){ (cal->F5NumFiredPPACX) += (int)(cal->PPACFiredX[1][j]) ; }
-  cal->F7NumFiredPPACX = 0; for(int j=0; j<4; j++){ (cal->F7NumFiredPPACX) += (int)(cal->PPACFiredX[2][j]) ; }
-  cal->F8NumFiredPPACX = 0; for(int j=0; j<4; j++){ (cal->F8NumFiredPPACX) += (int)(cal->PPACFiredX[3][j]) ; }
-  cal->F9NumFiredPPACX = 0; for(int j=0; j<4; j++){ (cal->F9NumFiredPPACX) += (int)(cal->PPACFiredX[4][j]) ; }
-  cal->F11NumFiredPPACX= 0; for(int j=0; j<4; j++){ (cal->F11NumFiredPPACX)+= (int)(cal->PPACFiredX[6][j]) ; }
-  cal->F3NumFiredPPACY = 0; for(int j=0; j<4; j++){ (cal->F3NumFiredPPACY) += (int)(cal->PPACFiredY[0][j]) ; }
-  cal->F5NumFiredPPACY = 0; for(int j=0; j<4; j++){ (cal->F5NumFiredPPACY) += (int)(cal->PPACFiredY[1][j]) ; }
-  cal->F7NumFiredPPACY = 0; for(int j=0; j<4; j++){ (cal->F7NumFiredPPACY) += (int)(cal->PPACFiredY[2][j]) ; }
-  cal->F8NumFiredPPACY = 0; for(int j=0; j<4; j++){ (cal->F8NumFiredPPACY) += (int)(cal->PPACFiredY[3][j]) ; }
-  cal->F9NumFiredPPACY = 0; for(int j=0; j<4; j++){ (cal->F9NumFiredPPACY) += (int)(cal->PPACFiredY[4][j]) ; }
-  cal->F11NumFiredPPACY= 0; for(int j=0; j<4; j++){ (cal->F11NumFiredPPACY)+= (int)(cal->PPACFiredY[6][j]) ; }
+  cal -> F3TrackedX  = false;  cal -> F3TrackedY  = false;
+  cal -> F5TrackedX  = false;  cal -> F5TrackedY  = false;
+  cal -> F7TrackedX  = false;  cal -> F7TrackedY  = false;
+  cal -> F8TrackedX  = false;  cal -> F8TrackedY  = false;
+  cal -> F9TrackedX  = false;  cal -> F9TrackedY  = false;
+  cal -> F11TrackedX = false;  cal -> F11TrackedY = false;
+  
+  cal -> F3NumFiredPPACX  = 0; for(int j=0; j<4; j++) { (cal -> F3NumFiredPPACX)  += (int)(cal -> PPACFiredX[0][j]); }
+  cal -> F5NumFiredPPACX  = 0; for(int j=0; j<4; j++) { (cal -> F5NumFiredPPACX)  += (int)(cal -> PPACFiredX[1][j]); }
+  cal -> F7NumFiredPPACX  = 0; for(int j=0; j<4; j++) { (cal -> F7NumFiredPPACX)  += (int)(cal -> PPACFiredX[2][j]); }
+  cal -> F8NumFiredPPACX  = 0; for(int j=0; j<4; j++) { (cal -> F8NumFiredPPACX)  += (int)(cal -> PPACFiredX[3][j]); }
+  cal -> F9NumFiredPPACX  = 0; for(int j=0; j<4; j++) { (cal -> F9NumFiredPPACX)  += (int)(cal -> PPACFiredX[4][j]); }
+  cal -> F11NumFiredPPACX = 0; for(int j=0; j<4; j++) { (cal -> F11NumFiredPPACX) += (int)(cal -> PPACFiredX[6][j]); }
+  cal -> F3NumFiredPPACY  = 0; for(int j=0; j<4; j++) { (cal -> F3NumFiredPPACY)  += (int)(cal -> PPACFiredY[0][j]); }
+  cal -> F5NumFiredPPACY  = 0; for(int j=0; j<4; j++) { (cal -> F5NumFiredPPACY)  += (int)(cal -> PPACFiredY[1][j]); }
+  cal -> F7NumFiredPPACY  = 0; for(int j=0; j<4; j++) { (cal -> F7NumFiredPPACY)  += (int)(cal -> PPACFiredY[2][j]); }
+  cal -> F8NumFiredPPACY  = 0; for(int j=0; j<4; j++) { (cal -> F8NumFiredPPACY)  += (int)(cal -> PPACFiredY[3][j]); }
+  cal -> F9NumFiredPPACY  = 0; for(int j=0; j<4; j++) { (cal -> F9NumFiredPPACY)  += (int)(cal -> PPACFiredY[4][j]); }
+  cal -> F11NumFiredPPACY = 0; for(int j=0; j<4; j++) { (cal -> F11NumFiredPPACY) += (int)(cal -> PPACFiredY[6][j]); }
 
   //tracking calculation
   double temp_x[7];
@@ -166,73 +198,94 @@ void EventRaw2Calib(RIBF132Raw* raw, RIBF132CalibOut* cal, RIBF132Parameter *par
   double temp_ssrx[7];  //sum of squared residual
   double temp_ssry[7];  //sum of squared residual
   
-  for(int ippac=0; ippac<7; ippac++){
+  for(int ippac=0; ippac<7; ippac++)
+  {
     temp_x[ippac] = -9999.;  temp_a[ippac] = -9999.;  temp_ssrx[ippac] = -9999.;
     temp_y[ippac] = -9999.;  temp_b[ippac] = -9999.;  temp_ssry[ippac] = -9999.;
+
     TMatrixD xvector(2,1); xvector.Zero();
     TMatrixD yvector(2,1); yvector.Zero();
     TMatrixD xmatrix(2,2); xmatrix.Zero();
     TMatrixD ymatrix(2,2); ymatrix.Zero();
+
     TMatrixD xvector_solution(2,1); xvector_solution.Zero();
     TMatrixD yvector_solution(2,1); yvector_solution.Zero();
 
     //---xa reconstruction---
-    if( ((cal->PPACFiredX[ippac][0]) || (cal->PPACFiredX[ippac][1])) && ((cal->PPACFiredX[ippac][2]) || (cal->PPACFiredX[ippac][3]))){
+    if( ((cal->PPACFiredX[ippac][0]) || (cal->PPACFiredX[ippac][1])) && ((cal->PPACFiredX[ippac][2]) || (cal->PPACFiredX[ippac][3])))
+    {
       // sum up matrix element and vector for least sq minimization
-      for(int j=0; j<4; j++){
-        double z_here = cal->PPACXZpos[ippac][j];
-        double x_here = cal->PPACX[ippac][j];
-        if(cal->PPACFiredX[ippac][j]){
-          xvector(0,0) += x_here;
-          xvector(1,0) += x_here * z_here;
-          xmatrix(0,0) += 1.0;    xmatrix(0,1) += z_here;
-          xmatrix(1,0) += z_here; xmatrix(1,1) += z_here*z_here;
+      for(int j=0; j<4; j++)                                        // loop for all A and B plates x position plates
+      {
+        double z_here = cal -> PPACXZpos[ippac][j];                 // XZpos means Z position for X cathode plate.
+        double x_here = cal -> PPACX[ippac][j];                     // this PPACX is what we calculated, PPACX_online is a different variable.
+
+        if(cal->PPACFiredX[ippac][j])                               // only do the sum if PPAC is fired
+        {
+          xvector(0,0) += x_here;                                   // ( x   )
+          xvector(1,0) += x_here * z_here;                          // ( x*z )
+
+          xmatrix(0,0) += 1.0;    xmatrix(0,1) += z_here;           // ( 1  z   )
+          xmatrix(1,0) += z_here; xmatrix(1,1) += z_here*z_here;    // ( z  z^2 )
         }
       }// sum up done
+
       // solve dchi2/dpara=0;
-      xvector_solution = xmatrix.Invert()  * xvector ;
-      temp_x[ippac] = xvector_solution(0,0);
-      temp_a[ippac] = 1000.*TMath::ATan(xvector_solution(1,0));
-      temp_ssrx[ippac] = 0.0; //initial value before summing up.
+      xvector_solution = xmatrix.Invert()  * xvector ;               // .Invert() means inverse of the matrix
+      temp_x[ippac]    = xvector_solution(0,0);
+      temp_a[ippac]    = 1000.*TMath::ATan(xvector_solution(1,0));   // x-angle. May be it is in mrad. That's why we are multiplying by 1000
+      temp_ssrx[ippac] = 0.0;                                        // initial value before summing up.
+      
       //sum up chi2
-      for(int j=0; j<4; j++){
-        double z_here = cal->PPACXZpos[ippac][j];
-        double x_here = cal->PPACX[ippac][j];
-        if(cal->PPACFiredX[ippac][j]){
+      for(int j=0; j<4; j++)
+      {
+        double z_here = cal -> PPACXZpos[ippac][j];
+        double x_here = cal -> PPACX[ippac][j];
+        if(cal->PPACFiredX[ippac][j])
+        {
           temp_ssrx[ippac]+= TMath::Power((temp_x[ippac] + (TMath::Tan(temp_a[ippac]/1000.))*z_here - x_here), 2); // mm^2
-	  cal->PPACResX[ippac][j] = (temp_x[ippac] + (TMath::Tan(temp_a[ippac]/1000.))*z_here - x_here);
-	  //printf("%f\n",cal->PPACResX[ippac][j]);
+	        cal->PPACResX[ippac][j] = (temp_x[ippac] + (TMath::Tan(temp_a[ippac]/1000.))*z_here - x_here);
+	        //printf("%f\n",cal->PPACResX[ippac][j]);
         }
       } //sum-up chi2 end
     }//---xa reconstruction end---
     
     //---yb reconstruction---
-    if( ((cal->PPACFiredY[ippac][0]) || (cal->PPACFiredY[ippac][1])) && ((cal->PPACFiredY[ippac][2]) || (cal->PPACFiredY[ippac][3]))){
+    if( ((cal->PPACFiredY[ippac][0]) || (cal->PPACFiredY[ippac][1])) && ((cal->PPACFiredY[ippac][2]) || (cal->PPACFiredY[ippac][3])))
+    {
       // sum up matrix element and vector for least sq minimization
-      for(int j=0; j<4; j++){
+      for(int j=0; j<4; j++)
+      {
         double z_here = cal->PPACYZpos[ippac][j];
         double y_here = cal->PPACY[ippac][j];
-        if(cal->PPACFiredY[ippac][j]){
+
+        if(cal->PPACFiredY[ippac][j])
+        {
           yvector(0,0) += y_here;
           yvector(1,0) += y_here * z_here;
           ymatrix(0,0) += 1.0;    ymatrix(0,1) += z_here;
           ymatrix(1,0) += z_here; ymatrix(1,1) += z_here*z_here;
         }
       }// sum up done
+
       // solve dchi2/dpara=0;
       yvector_solution = ymatrix.Invert()  * yvector ;
-      temp_y[ippac] = yvector_solution(0,0);
-      temp_b[ippac] = 1000.*TMath::ATan(yvector_solution(1,0));
+      temp_y[ippac]    = yvector_solution(0,0);
+      temp_b[ippac]    = 1000.*TMath::ATan(yvector_solution(1,0));
       temp_ssry[ippac] = 0.0; //initial value before summing up.
       //sum up chi2
-      for(int j=0; j<4; j++){
+      for(int j=0; j<4; j++)
+      {
         double z_here = cal->PPACYZpos[ippac][j];
         double y_here = cal->PPACY[ippac][j];
-        if(cal->PPACFiredY[ippac][j]){
+
+        if(cal->PPACFiredY[ippac][j])
+        {
           temp_ssry[ippac]+= TMath::Power((temp_y[ippac] + (TMath::Tan(temp_b[ippac]/1000.))*z_here - y_here), 2); // mm^2
-	  cal->PPACResY[ippac][j] = (temp_y[ippac] + (TMath::Tan(temp_b[ippac]/1000.))*z_here - y_here);
+	        cal->PPACResY[ippac][j] = (temp_y[ippac] + (TMath::Tan(temp_b[ippac]/1000.))*z_here - y_here);
         }
       } //sum-up chi2 end
+
     }//---xa reconstruction end---
     
   }
@@ -272,19 +325,21 @@ void EventRaw2Calib(RIBF132Raw* raw, RIBF132CalibOut* cal, RIBF132Parameter *par
   */
   
   //-----F3PPAC1 F3PPAC2----------
-  cal->X3PPAC1 = -9999.;
-  cal->X3PPAC2 = -9999.;
-  cal->Y3PPAC1 = -9999.;
-  cal->Y3PPAC2 = -9999.;
-  double sum_temp_x3ppac1=0.0;
-  double sum_temp_x3ppac2=0.0;
-  double sum_temp_y3ppac1=0.0;
-  double sum_temp_y3ppac2=0.0;
-  int    n_temp_x3ppac1=0;
-  int    n_temp_x3ppac2=0;
-  int    n_temp_y3ppac1=0;
-  int    n_temp_y3ppac2=0;
-  for(int j=0; j<2; j++){
+  cal -> X3PPAC1          = -9999.;
+  cal -> X3PPAC2          = -9999.;
+  cal -> Y3PPAC1          = -9999.;
+  cal -> Y3PPAC2          = -9999.;
+  double sum_temp_x3ppac1 = 0.0;
+  double sum_temp_x3ppac2 = 0.0;
+  double sum_temp_y3ppac1 = 0.0;
+  double sum_temp_y3ppac2 = 0.0;
+  int    n_temp_x3ppac1   = 0;
+  int    n_temp_x3ppac2   = 0;
+  int    n_temp_y3ppac1   = 0;
+  int    n_temp_y3ppac2   = 0;
+  
+  for(int j=0; j<2; j++)
+  {
     if((cal->PPACFiredX[0][j+0])){  sum_temp_x3ppac1 += cal->PPACX[0][j+0];   n_temp_x3ppac1++; }
     if((cal->PPACFiredX[0][j+2])){  sum_temp_x3ppac2 += cal->PPACX[0][j+2];   n_temp_x3ppac2++; }
     if((cal->PPACFiredY[0][j+0])){  sum_temp_y3ppac1 += cal->PPACY[0][j+0];   n_temp_y3ppac1++; }
@@ -1428,43 +1483,52 @@ void EventRaw2Calib(RIBF132Raw* raw, RIBF132CalibOut* cal, RIBF132Parameter *par
 //------------------------------------------------------------------
 //------------------------------------------------------------------
 
-void SetupParameter(RIBF132Parameter *para){
-  
+void SetupParameter(RIBF132Parameter *para)
+{  
   //---- load xml files for anaroot ----//
-  para->LoadParameter((char*)"db_calib/BigRIPSPPAC.xml");
-  para->LoadParameter((char*)"db_calib/BigRIPSIC.xml");
-  para->LoadParameter((char*)"db_calib/BigRIPSPlastic.xml");
-  para->LoadParameter((char*)"db_calib/FocalPlane.xml");
-  para->LoadParameter((char*)"db_calib/DALI.xml");///added
+  para -> LoadParameter((char*)"db_calib/BigRIPSPPAC.xml");
+  para -> LoadParameter((char*)"db_calib/BigRIPSIC.xml");
+  para -> LoadParameter((char*)"db_calib/BigRIPSPlastic.xml");
+  para -> LoadParameter((char*)"db_calib/FocalPlane.xml");
+  para -> LoadParameter((char*)"db_calib/DALI.xml");          // added
   
   // just to check above loadings
-  std::cout <<  "--parameter check--" << std::endl;
-  std::cout <<  "f7ic  :  " << para->f7ic->detname << ",  "<<para->f7ic->zcoef[0] << ",  " << para->f7ic->zcoef[1] <<  ",  " << para->f7ic->zcoef[2] << std::endl;
-  std::cout <<  "music1:  " << para->music1->detname << ",  "<<para->music1->zcoef[0] << ",  " << para->music1->zcoef[1] <<  ",  " << para->music1->zcoef[2] << std::endl;
-  std::cout <<  "music2:  " << para->music2->detname << ",  "<< para->music2->zcoef[0] << ",  " << para->music2->zcoef[1] <<  ",  " << para->music2->zcoef[2] << std::endl;
-  std::cout <<  "plastic0:  " << para->pla[0]->detname << ",  " <<  para->pla[0]->tcal_left << ",  " <<  para->pla[0]->tcal_right << std::endl;
-  std::cout <<  "plastic1:  " << para->pla[1]->detname << ",  " <<  para->pla[1]->tcal_left << ",  " <<  para->pla[1]->tcal_right << std::endl;
-  std::cout <<  "plastic2:  " << para->pla[2]->detname << ",  " <<  para->pla[2]->tcal_left << ",  " <<  para->pla[2]->tcal_right << std::endl;
-  std::cout <<  "plastic3:  " << para->pla[3]->detname << ",  " <<  para->pla[3]->tcal_left << ",  " <<  para->pla[3]->tcal_right << std::endl;
-  std::cout <<  "plastic4:  " << para->pla[4]->detname << ",  " <<  para->pla[4]->tcal_left << ",  " <<  para->pla[4]->tcal_right << std::endl;
-  std::cout <<  "plastic5:  " << para->pla[5]->detname << ",  " <<  para->pla[5]->tcal_left << ",  " <<  para->pla[5]->tcal_right << std::endl;
-  std::cout <<  "plastic6:  " << para->pla[6]->detname << ",  " <<  para->pla[6]->tcal_left << ",  " <<  para->pla[6]->tcal_right << std::endl;
-  std::cout <<  "plastic7:  " << para->pla[7]->detname << ",  " <<  para->pla[7]->tcal_left << ",  " <<  para->pla[7]->tcal_right << std::endl;
-  std::cout <<  "PPAC-NAME,FPL,a_ch2ns,x1_ch2ns,y1_ch2ns,x2_ch2ns,y2_ch2ns,xfactor,yfactor,";
-  std::cout <<  "xoffset,yoffset,xns_off,yns_off,xpos_off,ypos_off,xzpos,yzpos...."<< std::endl;
-  for(int ii=0;ii<7;ii++){
-    for(int jj=0; jj<4; jj++){
-      std::cout << para->ppac[ii][jj]->detname <<","<<para->ppac[ii][jj]->fpl <<","<<para->ppac[ii][jj]->ch2ns_a <<","<<para->ppac[ii][jj]->ch2ns_x1 <<","<<para->ppac[ii][jj]->ch2ns_y1 ;
-      std::cout <<","<<para->ppac[ii][jj]->ch2ns_x2 <<","<<para->ppac[ii][jj]->ch2ns_y2 <<","<<para->ppac[ii][jj]->xfactor <<","<<para->ppac[ii][jj]->yfactor <<","<<para->ppac[ii][jj]->xoffset <<",";
-      std::cout <<para->ppac[ii][jj]->yoffset <<","<<para->ppac[ii][jj]->xns_off <<","<<para->ppac[ii][jj]->yns_off <<","<<para->ppac[ii][jj]->xpos_off <<","<<para->ppac[ii][jj]->ypos_off <<",";
-      std::cout <<para->ppac[ii][jj]->xzpos <<","<<para->ppac[ii][jj]->yzpos <<std::endl;
+  std::cout << "--parameter check--" << std::endl;
+  std::cout << "f7ic     :  " << para -> f7ic   -> detname << ",  " << para -> f7ic   -> zcoef[0]  << ",  " << para -> f7ic   -> zcoef[1]   <<  ",  " << para -> f7ic   -> zcoef[2] << std::endl;
+  std::cout << "music1   :  " << para -> music1 -> detname << ",  " << para -> music1 -> zcoef[0]  << ",  " << para -> music1 -> zcoef[1]   <<  ",  " << para -> music1 -> zcoef[2] << std::endl;
+  std::cout << "music2   :  " << para -> music2 -> detname << ",  " << para -> music2 -> zcoef[0]  << ",  " << para -> music2 -> zcoef[1]   <<  ",  " << para -> music2 -> zcoef[2] << std::endl;
+  std::cout << "plastic0 :  " << para -> pla[0] -> detname << ",  " << para -> pla[0] -> tcal_left << ",  " << para -> pla[0] -> tcal_right << std::endl;
+  std::cout << "plastic1 :  " << para -> pla[1] -> detname << ",  " << para -> pla[1] -> tcal_left << ",  " << para -> pla[1] -> tcal_right << std::endl;
+  std::cout << "plastic2 :  " << para -> pla[2] -> detname << ",  " << para -> pla[2] -> tcal_left << ",  " << para -> pla[2] -> tcal_right << std::endl;
+  std::cout << "plastic3 :  " << para -> pla[3] -> detname << ",  " << para -> pla[3] -> tcal_left << ",  " << para -> pla[3] -> tcal_right << std::endl;
+  std::cout << "plastic4 :  " << para -> pla[4] -> detname << ",  " << para -> pla[4] -> tcal_left << ",  " << para -> pla[4] -> tcal_right << std::endl;
+  std::cout << "plastic5 :  " << para -> pla[5] -> detname << ",  " << para -> pla[5] -> tcal_left << ",  " << para -> pla[5] -> tcal_right << std::endl;
+  std::cout << "plastic6 :  " << para -> pla[6] -> detname << ",  " << para -> pla[6] -> tcal_left << ",  " << para -> pla[6] -> tcal_right << std::endl;
+  std::cout << "plastic7 :  " << para -> pla[7] -> detname << ",  " << para -> pla[7] -> tcal_left << ",  " << para -> pla[7] -> tcal_right << std::endl;
+  
+  std::cout << "PPAC-NAME, FPL, a_ch2ns, x1_ch2ns, y1_ch2ns, x2_ch2ns, y2_ch2ns, xfactor, yfactor, ";
+  std::cout << "xoffset, yoffset, xns_off, yns_off, xpos_off, ypos_off, xzpos, yzpos...." << std::endl;
+
+  for(int ii = 0; ii < 7; ii++)
+  {
+    for(int jj = 0; jj < 4; jj++)
+    {
+      std::cout << para -> ppac[ii][jj] -> detname << "," << para -> ppac[ii][jj] -> fpl << "," << para -> ppac[ii][jj] -> ch2ns_a << "," << para -> ppac[ii][jj] -> ch2ns_x1 << "," << para -> ppac[ii][jj] ->ch2ns_y1;
+      std::cout << "," << para -> ppac[ii][jj] -> ch2ns_x2 << "," << para -> ppac[ii][jj] -> ch2ns_y2 << "," << para -> ppac[ii][jj] -> xfactor << "," << para -> ppac[ii][jj] -> yfactor << "," << para -> ppac[ii][jj] -> xoffset << ",";
+      
+      std::cout << para -> ppac[ii][jj] -> yoffset << "," << para -> ppac[ii][jj] -> xns_off << "," << para -> ppac[ii][jj] -> yns_off << "," << para -> ppac[ii][jj] -> xpos_off << "," << para -> ppac[ii][jj] -> ypos_off << ",";
+      std::cout << para -> ppac[ii][jj] -> xzpos << "," << para -> ppac[ii][jj] -> yzpos << std::endl;
     }
   }
-  for(int ii=0; ii<12; ii++){
-    std::cout <<  "focalplane("<< ii <<"):  id=" << para->fp[ii]->id <<",  fpl="  << para->fp[ii]->fpl <<",  zpos="  << para->fp[ii]->zpos <<",  zpos_offset=" << para->fp[ii]->zpos_offset <<std::endl;
+
+  for(int ii = 0; ii < 12; ii++)
+  {
+    std::cout << "focalplane(" << ii << "):  id = " << para -> fp[ii] -> id << ",  fpl = " << para -> fp[ii] -> fpl << ",  zpos = " << para -> fp[ii] -> zpos << ",  zpos_offset = " << para -> fp[ii] -> zpos_offset << std::endl;
   }
-  for(int ii=0; ii<188; ii++){
-    std::cout << "DALI NAI (id=" << para->nai[ii]->id << "): " << " fpl="  << para->nai[ii]->fpl <<", theta=" << para->nai[ii]->theta <<", x_pos=" << para->nai[ii]->x_pos <<", y_pos=" << para->nai[ii]->y_pos <<", z_pos=" << para->nai[ii]->z_pos <<", adc_geo=" << para->nai[ii]->adc_geo <<", adc_ch=" << para->nai[ii]->adc_ch << para->nai[ii]->z_pos <<", tdc_geo=" << para->nai[ii]->tdc_geo <<", tdc_ch=" << para->nai[ii]->tdc_ch << std::endl;
+
+  for(int ii = 0; ii < 188; ii++)
+  {
+    std::cout << "DALI NAI (id=" << para -> nai[ii] -> id << "): " << " fpl="  << para -> nai[ii] -> fpl << ", theta = " << para->nai[ii]->theta << ", x_pos = " << para -> nai[ii] -> x_pos << ", y_pos = " << para -> nai[ii] -> y_pos << ", z_pos = " << para -> nai[ii] -> z_pos << ", adc_geo = " << para -> nai[ii] -> adc_geo << ", adc_ch = " << para -> nai[ii] -> adc_ch << para -> nai[ii]-> z_pos << ", tdc_geo = " << para -> nai[ii] -> tdc_geo <<", tdc_ch = " << para -> nai[ii] -> tdc_ch << std::endl;
   }
   
   
@@ -1472,7 +1536,7 @@ void SetupParameter(RIBF132Parameter *para){
   // para->dummy = 123.0 ;  std::cout << para->dummy << std::endl;  // just for test
 
   // outside this file
-  setup(para); //
+  setup(para);          // from setup.C file
   
   return ;
 }
@@ -1480,8 +1544,8 @@ void SetupParameter(RIBF132Parameter *para){
 //------------------------------------------------------------------
 //------------------------------------------------------------------
 
-int main(int argc, char *argv[]){
-  
+int main(int argc, char *argv[])
+{  
   random3 = new TRandom3(0);
   
   char inputfilename[256];
@@ -1495,25 +1559,27 @@ int main(int argc, char *argv[]){
   // argv[3] is the outputfile name
   // argv[4] is the runnumber
 
-  sprintf(inputfilename, "%s%s", argv[1], argv[2]);
-  sprintf(outputfilename,"%s%s", argv[1], argv[3]);
-  sprintf(ppactripdatafilename,"ppactripdata/run%04d.txt",runnumber);
+  sprintf(inputfilename,        "%s%s", argv[1], argv[2]);
+  sprintf(outputfilename,       "%s%s", argv[1], argv[3]);
+  sprintf(ppactripdatafilename, "ppactripdata/run%04d.txt", runnumber);
 
   //parameter
   RIBF132Parameter *para = new RIBF132Parameter();
   SetupParameter(para);
   
   TFile *file1 = TFile::Open(inputfilename);
-  if((TFile *)nullptr==file1){
-    std::cout<< "input file (" << inputfilename << ")does not exist... "<<std::endl;
-    std::cout<< "stop.. "<<std::endl;
+  if((TFile *)nullptr == file1)
+  {
+    std::cout << "input file (" << inputfilename << ")does not exist... " << std::endl;
+    std::cout << "stop.. "<< std::endl;
     return -1;
   }
   
   TTree *tree1 = (TTree*)(file1->Get("tree"));
-  if((TTree *)nullptr==tree1){
-    std::cout<< "input tree (tree) does not exist... "<<std::endl;
-    std::cout<< "stop.. "<<std::endl;
+  if((TTree *)nullptr == tree1)
+  {
+    std::cout << "input tree (tree) does not exist... "<< std::endl;
+    std::cout << "stop.. "<< std::endl;
     return -1;
   }
   
@@ -1528,21 +1594,28 @@ int main(int argc, char *argv[]){
   int inttemp[16];
   
   FILE* fp_ppactripdata;
-  if((fp_ppactripdata = fopen(ppactripdatafilename, "r")) == NULL) {
-    std::cout<< "ppac-trip-data file does not exist... "<<std::endl;
-    std::cout<< "stop.. "<<std::endl;
+  if((fp_ppactripdata = fopen(ppactripdatafilename, "r")) == NULL)
+  {
+    std::cout << "ppac-trip-data file does not exist... " << std::endl;
+    std::cout << "stop.. " << std::endl;
     return -1;
   }
 
-  while(fscanf(fp_ppactripdata, "%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d", inttemp+0, inttemp+1, inttemp+2, inttemp+3, inttemp+4, inttemp+5, inttemp+6, inttemp+7, inttemp+8, inttemp+9, inttemp+10, inttemp+11, inttemp+12, inttemp+13, inttemp+14, inttemp+15) != EOF){
+  while(fscanf(fp_ppactripdata, "%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d", inttemp+0, inttemp+1, inttemp+2, inttemp+3, inttemp+4, inttemp+5, inttemp+6, inttemp+7, inttemp+8, inttemp+9, inttemp+10, inttemp+11, inttemp+12, inttemp+13, inttemp+14, inttemp+15) != EOF)
+  {
     iev_first[ngr_ppactripdata] = inttemp[0];
     iev_last[ngr_ppactripdata]  = inttemp[1];
-    for( int iii=0; iii<14; iii++){ check_ppacstatus[ngr_ppactripdata][iii] =  inttemp[2+iii]; }
-    if(1){//check
+
+    for(int iii = 0; iii < 14; iii++) { check_ppacstatus[ngr_ppactripdata][iii] =  inttemp[2+iii]; }
+
+    if(1)
+    { 
+      //check
       printf("%d %d %d ",ngr_ppactripdata, iev_first[ngr_ppactripdata], iev_last[ngr_ppactripdata]);
-      for( int iii=0; iii<14; iii++){ printf("%d ", check_ppacstatus[ngr_ppactripdata][iii]); }
+      for(int iii = 0; iii < 14; iii++) { printf("%d ", check_ppacstatus[ngr_ppactripdata][iii]); }
       printf("\n");
     }
+
     ngr_ppactripdata++;
   }
   nev_gr_ppactripdata = iev_last[0] - iev_first[0] + 1;
@@ -1552,9 +1625,11 @@ int main(int argc, char *argv[]){
   
   //----init----
   //input
-  RIBF132Raw   *raw = new RIBF132Raw(tree1);
-  if (raw->fChain == 0) return -1;
-  Long64_t nentries = raw->fChain->GetEntriesFast();
+  RIBF132Raw *raw = new RIBF132Raw(tree1);
+
+  if(raw -> fChain == 0) return -1;
+
+  Long64_t nentries = raw -> fChain -> GetEntriesFast();
   Long64_t nbytes = 0, nb = 0;
   
   
@@ -1562,43 +1637,54 @@ int main(int argc, char *argv[]){
   TFile *file2 = new TFile(outputfilename,"RECREATE");
   TTree *tree2 = new TTree("cal","cal");
   RIBF132CalibOut *cal = new RIBF132CalibOut(tree2);
-  cal->Init();
+  cal -> Init();
   
   
   //----loop for event----
-  for (Long64_t jentry=0; jentry<nentries;jentry++) {
-    Long64_t ientry = raw->LoadTree(jentry);
+  for(Long64_t jentry = 0; jentry < nentries; jentry++)
+  {
+    Long64_t ientry = raw -> LoadTree(jentry);
     if (ientry < 0) break;
-    nb = raw->fChain->GetEntry(jentry);   nbytes += nb;
+
+    nb = raw -> fChain -> GetEntry(jentry);   nbytes += nb;
+
     // if (Cut(ientry) < 0) continue;
-    if(0!=jentry && 0==(jentry % 10000)){ std::cout << "." << std::flush; }
-    if(0!=jentry && 0==(jentry % 100000)){ std::cout << std::endl << std::flush; }
-    cal->ievent = ((int)jentry);
-    EventRaw2Calib(raw, cal, para); //// Main Program for Each Event
+    if(0!=jentry && 0==(jentry % 10000) ) { std::cout << "." << std::flush;       }
+    if(0!=jentry && 0==(jentry % 100000)) { std::cout << std::endl << std::flush; }
+    
+    cal -> ievent = ((int)jentry);
+
+    // Main Program for Each Event
+    EventRaw2Calib(raw, cal, para);
     
     //---------------------
     //  PPAC HV trip data (27Sep2017)
     int j_gr = ((int)jentry)/nev_gr_ppactripdata;
-    if(jentry<iev_first[j_gr] || iev_last[j_gr]<jentry ){ //error
-      std::cout<< "Line mismatch in PPAC HV trip data !!! ... "<<std::endl;
+    if(jentry<iev_first[j_gr] || iev_last[j_gr]<jentry )
+    { //error
+      std::cout << "Line mismatch in PPAC HV trip data !!! ... " << std::endl;
     }
-    if(1==check_ppacstatus[j_gr][0]){ cal->bF3PPACHVX = true; }else{ cal->bF3PPACHVX = false; }
-    if(1==check_ppacstatus[j_gr][1]){ cal->bF3PPACHVY = true; }else{ cal->bF3PPACHVY = false; }
-    if(1==check_ppacstatus[j_gr][2]){ cal->bF5PPACHVX = true; }else{ cal->bF5PPACHVX = false; }
-    if(1==check_ppacstatus[j_gr][3]){ cal->bF5PPACHVY = true; }else{ cal->bF5PPACHVY = false; }
-    if(1==check_ppacstatus[j_gr][4]){ cal->bF7PPACHVX = true; }else{ cal->bF7PPACHVX = false; }
-    if(1==check_ppacstatus[j_gr][5]){ cal->bF7PPACHVY = true; }else{ cal->bF7PPACHVY = false; }
-    if(1==check_ppacstatus[j_gr][6]){ cal->bF8PPACHVX = true; }else{ cal->bF8PPACHVX = false; }
-    if(1==check_ppacstatus[j_gr][7]){ cal->bF8PPACHVY = true; }else{ cal->bF8PPACHVY = false; }
-    if(1==check_ppacstatus[j_gr][8]){ cal->bF9PPACHVX = true; }else{ cal->bF9PPACHVX = false; }
-    if(1==check_ppacstatus[j_gr][9]){ cal->bF9PPACHVY = true; }else{ cal->bF9PPACHVY = false; }
-    if(1==check_ppacstatus[j_gr][10]){ cal->bF11PPACHVX = true; }else{ cal->bF11PPACHVX = false; }
-    if(1==check_ppacstatus[j_gr][11]){ cal->bF11PPACHVY = true; }else{ cal->bF11PPACHVY = false; }
-    if(1==check_ppacstatus[j_gr][12]){ cal->bF8PPAC1HVX = true; }else{ cal->bF8PPAC1HVX = false; }
-    if(1==check_ppacstatus[j_gr][13]){ cal->bF8PPAC1HVY = true; }else{ cal->bF8PPAC1HVY = false; }
-    if((cal->bF5PPACHVX) && (cal->bF7PPACHVX) && (cal->bF9PPACHVX) && (cal->bF11PPACHVX)){ cal->bF57911PPACHVX = true; }else{ cal->bF57911PPACHVX = false; }
-    if((cal->bF5PPACHVY) && (cal->bF7PPACHVY) && (cal->bF9PPACHVY) && (cal->bF11PPACHVY)){ cal->bF57911PPACHVY = true; }else{ cal->bF57911PPACHVY = false; }
-    if((cal->bF57911PPACHVX) && (cal->bF57911PPACHVY)){ cal->bF57911PPACHV = true; }else{ cal->bF57911PPACHV = false; }
+
+    if(1==check_ppacstatus[j_gr][0])  { cal->bF3PPACHVX  = true; } else { cal -> bF3PPACHVX  = false; }
+    if(1==check_ppacstatus[j_gr][1])  { cal->bF3PPACHVY  = true; } else { cal -> bF3PPACHVY  = false; }
+    if(1==check_ppacstatus[j_gr][2])  { cal->bF5PPACHVX  = true; } else { cal -> bF5PPACHVX  = false; }
+    if(1==check_ppacstatus[j_gr][3])  { cal->bF5PPACHVY  = true; } else { cal -> bF5PPACHVY  = false; }
+    if(1==check_ppacstatus[j_gr][4])  { cal->bF7PPACHVX  = true; } else { cal -> bF7PPACHVX  = false; }
+    if(1==check_ppacstatus[j_gr][5])  { cal->bF7PPACHVY  = true; } else { cal -> bF7PPACHVY  = false; }
+    if(1==check_ppacstatus[j_gr][6])  { cal->bF8PPACHVX  = true; } else { cal -> bF8PPACHVX  = false; }
+    if(1==check_ppacstatus[j_gr][7])  { cal->bF8PPACHVY  = true; } else { cal -> bF8PPACHVY  = false; }
+    if(1==check_ppacstatus[j_gr][8])  { cal->bF9PPACHVX  = true; } else { cal -> bF9PPACHVX  = false; }
+    if(1==check_ppacstatus[j_gr][9])  { cal->bF9PPACHVY  = true; } else { cal -> bF9PPACHVY  = false; }
+    if(1==check_ppacstatus[j_gr][10]) { cal->bF11PPACHVX = true; } else { cal -> bF11PPACHVX = false; }
+    if(1==check_ppacstatus[j_gr][11]) { cal->bF11PPACHVY = true; } else { cal -> bF11PPACHVY = false; }
+    if(1==check_ppacstatus[j_gr][12]) { cal->bF8PPAC1HVX = true; } else { cal -> bF8PPAC1HVX = false; }
+    if(1==check_ppacstatus[j_gr][13]) { cal->bF8PPAC1HVY = true; } else { cal -> bF8PPAC1HVY = false; }
+
+    if((cal->bF5PPACHVX) && (cal->bF7PPACHVX) && (cal->bF9PPACHVX) && (cal->bF11PPACHVX)) { cal -> bF57911PPACHVX = true; } else { cal -> bF57911PPACHVX = false; }
+    if((cal->bF5PPACHVY) && (cal->bF7PPACHVY) && (cal->bF9PPACHVY) && (cal->bF11PPACHVY)) { cal -> bF57911PPACHVY = true; } else { cal -> bF57911PPACHVY = false; }
+    
+    if((cal->bF57911PPACHVX) && (cal->bF57911PPACHVY)) { cal -> bF57911PPACHV = true; } else { cal -> bF57911PPACHV = false; }
+    
     //----------------------
     
     
