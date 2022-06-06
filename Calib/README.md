@@ -9,13 +9,12 @@ $ make clean
 $ make
 ```
 3. Execute the program
-- I edited the calib.cc. Now it requires 4 inputs
-  1) Path to input file
-  2) Name of input file
-  3) Name of output file. Output file will be created in the same folder as inputfile.
-  4) run number 
+- I edited the calib.cc. Now it requires 3 inputs
+  1) full name of input file with path.
+  2) full name of output file with path.
+  3) run number 
 ```
-$ ./calib Path Inputfile.root Outputfile.root runnumber
+$ ./calib Inputfile.root Outputfile.root runnumber
 ```
 
 ## Output file name
