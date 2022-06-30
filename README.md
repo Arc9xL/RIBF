@@ -12,7 +12,7 @@
 1. Download `anaroot_v4.5.36.tgz`.
 - Extract the file in ANAROOTriken folder.
 ```
-d@d:~/ANAROOTriken$ tar xzfv anaroot_v4.5.36.tgz
+usrName@usrName:~/ANAROOTriken$ tar xzfv anaroot_v4.5.36.tgz
 ```
 
 2. `cd anaroot`
@@ -22,8 +22,8 @@ d@d:~/ANAROOTriken$ tar xzfv anaroot_v4.5.36.tgz
 
 4. Super user.
 ```
-d@d:~/ANAROOTriken/anaroot$ sudo su
-root@d:/home/usrName/ANAROOTriken/anaroot# 
+usrName@usrName:~/ANAROOTriken/anaroot$ sudo su
+root@usrName:/home/usrName/ANAROOTriken/anaroot# 
 ```
 
 5. `./autogen.sh --prefix=$PWD`
@@ -38,8 +38,8 @@ root@d:/home/usrName/ANAROOTriken/anaroot#
 8. Add anaroot path to `.bashrc` file
 - Open `.bashrc` file
 ```
-root@d:/home/usrName/ANAROOTriken/anaroot# cd
-root@d:~# gedit .bashrc 
+root@usrName:/home/usrName/ANAROOTriken/anaroot# cd
+root@usrName:~# gedit .bashrc 
 ```
 - Add following lines
 ```
@@ -73,7 +73,7 @@ root [0]
 
 11. To access anaroot as a normal user, I repeated step-7 for bashrc file in `/home/usrName`.
 ```
-root@d:~# gedit /home/usrName/.bashrc
+root@usrName:~# gedit /home/usrName/.bashrc
 ```
 - The last lines for both the `.bashrc` files are
 ```
