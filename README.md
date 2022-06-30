@@ -23,7 +23,7 @@ d@d:~/ANAROOTriken$ tar xzfv anaroot_v4.5.36.tgz
 4. Super user.
 ```
 d@d:~/ANAROOTriken/anaroot$ sudo su
-root@d:/home/d/ANAROOTriken/anaroot# 
+root@d:/home/usrName/ANAROOTriken/anaroot# 
 ```
 
 5. `./autogen.sh --prefix=$PWD`
@@ -38,13 +38,13 @@ root@d:/home/d/ANAROOTriken/anaroot#
 8. Add anaroot path to `.bashrc` file
 - Open `.bashrc` file
 ```
-root@d:/home/d/ANAROOTriken/anaroot# cd
+root@d:/home/usrName/ANAROOTriken/anaroot# cd
 root@d:~# gedit .bashrc 
 ```
 - Add following lines
 ```
 # ANAROOT RIKEN
-export TARTSYS=/home/d/ANAROOTriken/anaroot
+export TARTSYS=/home/usrName/ANAROOTriken/anaroot
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$TARTSYS/lib
 ```
 
@@ -53,9 +53,9 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$TARTSYS/lib
 10. `root -l`
 - The command history after this step is following.
 ```
-root@d:~# cd /home/d/ANAROOTriken/anaroot
-root@d:/home/d/ANAROOTriken/anaroot/run# root -l
-add include path : /home/d/ANAROOTriken/anaroot/include
+root@d:~# cd /home/usrName/ANAROOTriken/anaroot
+root@d:/home/usrName/ANAROOTriken/anaroot/run# root -l
+add include path : /home/usrName/ANAROOTriken/anaroot/include
 reading libXMLParser.so
 reading libananadeko.so
 reading libanacore.so
@@ -71,16 +71,16 @@ reading libanaloopencexample.so
 root [0] 
 ```
 
-11. To access anaroot as a normal user, I repeated step-7 for bashrc file in `/home/d`.
+11. To access anaroot as a normal user, I repeated step-7 for bashrc file in `/home/usrName`.
 ```
-root@d:~# gedit /home/d/.bashrc
+root@d:~# gedit /home/usrName/.bashrc
 ```
 - The last lines for both the `.bashrc` files are
 ```
 # ROOT CERN
-source /home/d/ROOTcern/root-6.10.04install/bin/thisroot.sh 
+source /home/usrName/ROOTcern/root-6.10.04install/bin/thisroot.sh 
 
 # ANAROOT RIKEN
-export TARTSYS=/home/d/ANAROOTriken/anaroot
+export TARTSYS=/home/usrName/ANAROOTriken/anaroot
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$TARTSYS/lib
 ```
