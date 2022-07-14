@@ -19,5 +19,5 @@ $ ./calib Inputfile.root Outputfile.root runnumber
 
 ## Output file name
 
-- The conventional name for output calib file is: calibRUNNUMBER.root.
-- For exampler file name `calib0125.root` indicates calibrated outputfile for 125 runnumber.
+- The conventional name for output calib file is: calRUNNUMBER.root.
+- For exampler file name `cal0125.root` indicates calibrated outputfile for 125 runnumber.
